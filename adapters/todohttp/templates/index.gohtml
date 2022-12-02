@@ -1,0 +1,35 @@
+<html>
+<head>
+    <title>todo</title>
+    <meta charset="UTF-8"/>
+    <script src="/static/htmx.min.js"></script>
+    <link rel=stylesheet href="/static/styles.css"/>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Courier+Prime:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body hx-boost="true">
+<section>
+    <h1>Todos</h1>
+
+    <table>
+        <thead>
+        <th></th>
+        <th>Description</th>
+        <th>Date added</th>
+        <th></th>
+        </thead>
+        <tbody>
+        {{range .}}
+            {{template "todo" .}}
+        {{end}}
+        </tbody>
+    </table>
+
+    <form method="post" action="/add">
+        <label>Description <input type="text" name="description"/></label>
+        <input type="submit" value="Add"/>
+    </form>
+</section>
+</body>
+</html>
