@@ -4,7 +4,7 @@ spiking out a todo list with htmx.
 
 all the fluid UI fun of an SPA with none of the pain
 
-![image](https://user-images.githubusercontent.com/631756/205446850-8cba217b-808c-4b1c-9930-4c3901fe76f9.png)
+![image](https://user-images.githubusercontent.com/631756/205446910-2196c5e5-ffe5-418d-b468-9523d0d2d954.png)
 
 ## try it
 
