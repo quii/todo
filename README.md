@@ -4,7 +4,7 @@ spiking out a todo list with htmx
 
 ## try it
 
-`go run cmd/server/main.go` and [visit](http://localhost:8080)
+`go run cmd/server/main.go` and [visit](http://localhost:8000)
 
 ## notes, thoughts etc
 
