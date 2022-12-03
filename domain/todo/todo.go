@@ -1,6 +1,7 @@
 package todo
 
 import (
+	"strings"
 	"time"
 
 	"github.com/google/uuid"
@@ -58,4 +59,15 @@ func (s *Service) indexOf(id uuid.UUID) int {
 	return slices.IndexFunc(s.todos, func(todo Todo) bool {
 		return todo.ID == id
 	})
+}
+
+func (s *Service) Search(search string) []Todo {
+	search = strings.ToLower(search)
+	var results []Todo
+	for _, todo := range s.todos {
+		if strings.Contains(strings.ToLower(todo.Description), search) {
+			results = append(results, todo)
+		}
+	}
+	return results
 }

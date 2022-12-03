@@ -14,7 +14,15 @@
 <body hx-boost="true">
 <section>
     <h1>Todos</h1>
-    <form hx-post="/" hx-trigger="end" class="sortable">
+    <input type="search"
+           name="search" placeholder="Begin Typing To Search Todos"
+           hx-post="/search"
+           hx-trigger="keyup changed delay:500ms, search"
+           hx-target="#todos"
+           hx-replace="innerHTML"
+           >
+
+    <form hx-post="/" hx-trigger="end" class="sortable" id="todos">
         {{template "items_component" .}}
     </form>
     <form method="post" action="/add">

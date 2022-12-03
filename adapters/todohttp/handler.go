@@ -38,6 +38,7 @@ func NewTodoHandler(service *todo.Service) *TodoHandler {
 	router.HandleFunc("/", handler.index).Methods(http.MethodGet)
 	router.HandleFunc("/", handler.sortIndex).Methods(http.MethodPost)
 	router.HandleFunc("/add", handler.add).Methods(http.MethodPost)
+	router.HandleFunc("/search", handler.search).Methods(http.MethodPost)
 	router.HandleFunc("/toggle/{ID}", handler.toggle).Methods(http.MethodPost)
 	router.HandleFunc("/{ID}", handler.delete).Methods(http.MethodDelete)
 
@@ -102,6 +103,14 @@ func (t *TodoHandler) sortIndex(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if err := t.templ.ExecuteTemplate(w, "items.gohtml", t.service.Todos()); err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+	}
+}
+
+func (t *TodoHandler) search(w http.ResponseWriter, r *http.Request) {
+	r.ParseForm()
+
+	if err := t.templ.ExecuteTemplate(w, "items.gohtml", t.service.Search(r.Form.Get("search"))); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
 }
