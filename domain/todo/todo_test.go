@@ -31,6 +31,5 @@ func TestService(t *testing.T) {
 
 		todos = service.Todos()
 		assert.False(t, todos[0].Complete)
-
 	})
 }

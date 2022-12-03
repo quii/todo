@@ -14,20 +14,19 @@
 <body hx-boost="true">
 <section>
     <h1>Todos</h1>
-    <input type="search"
-           name="search" placeholder="Begin Typing To Search Todos"
-           hx-post="/search"
-           hx-trigger="keyup changed delay:500ms, search"
-           hx-target="#todos"
-           hx-replace="innerHTML"
-           >
+    <label>Search <input type="text"
+                         name="search" placeholder="Begin Typing To Search"
+                         hx-post="/search"
+                         hx-trigger="keyup changed delay:500ms, search"
+                         hx-target="#todos"
+                         hx-replace="innerHTML"
+        ></label>
 
     <form hx-post="/" hx-trigger="end" class="sortable" id="todos">
         {{template "items_component" .}}
     </form>
     <form method="post" action="/add">
         <label>Description <input type="text" minlength="3" name="description" autofocus/></label>
-        <input type="submit" value="Add"/>
     </form>
 </section>
 </body>

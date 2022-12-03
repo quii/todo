@@ -24,7 +24,6 @@ func (s *Service) Add(description string) {
 		ID:          uuid.New(),
 		Description: description,
 		CreatedAt:   time.Now(),
-		Complete:    false,
 	})
 }
 

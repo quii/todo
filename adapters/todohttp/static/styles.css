@@ -28,3 +28,22 @@ h1 {
 div.dragClass {
     border-bottom: none;
 }
+
+label {
+    display: flex;
+}
+
+label input {
+    width: 100%;
+    margin-left: 1em;
+}
+
+button {
+    all: unset;
+    cursor: pointer;
+    font-size: 0.6em;
+}
+
+button:focus {
+    outline: red 5px auto;
+}
