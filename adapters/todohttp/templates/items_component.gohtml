@@ -1,7 +1,5 @@
 {{define "items_component"}}
-    <ol class="sortable">
-        {{range .}}
-            {{template "item_component" .}}
-        {{end}}
-    </ol>
+    {{range .}}
+        {{template "item_component" .}}
+    {{end}}
 {{end}}

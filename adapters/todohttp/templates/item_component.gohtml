@@ -1,8 +1,8 @@
 {{define "item_component"}}
-    <li>
-        <input type="hidden"name="id" value="{{.ID}}" />
-        <input type="checkbox" hx-post="/toggle/{{.ID}}" {{if .Complete}} checked {{end}} />
-        <td>{{.Description}}</td>
-        <td><button hx-target="closest li"  hx-swap="outerHTML" hx-delete="/{{.ID}}">🗑</button></td>
-    </li>
+    <div>
+        <input type="hidden" name="id" value="{{.ID}}"/>
+        <input hx-target="closest div" type="checkbox" hx-post="/toggle/{{.ID}}" {{if .Complete}} checked {{end}} />
+        {{.Description}}
+        <button hx-target="closest div" hx-swap="outerHTML" hx-delete="/{{.ID}}">🗑</button>
+    </div>
 {{end}}

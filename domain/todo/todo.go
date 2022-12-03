@@ -1,7 +1,6 @@
 package todo
 
 import (
-	"log"
 	"time"
 
 	"github.com/google/uuid"
@@ -46,8 +45,6 @@ func (s *Service) ReOrder(ids []string) {
 	for _, id := range ids {
 		uuids = append(uuids, uuid.MustParse(id))
 	}
-
-	log.Println("sorting with", uuids)
 
 	var newList []Todo
 	for _, id := range uuids {
