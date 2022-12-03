@@ -35,6 +35,7 @@ func NewTodoHandler(service *todo.Service) *TodoHandler {
 	}
 
 	router.HandleFunc("/", handler.index).Methods(http.MethodGet)
+	router.HandleFunc("/", handler.sortIndex).Methods(http.MethodPost)
 	router.HandleFunc("/add", handler.add).Methods(http.MethodPost)
 	router.HandleFunc("/toggle/{ID}", handler.toggle).Methods(http.MethodPost)
 	router.HandleFunc("/{ID}", handler.delete).Methods(http.MethodDelete)
@@ -56,7 +57,9 @@ func NewTodoHandler(service *todo.Service) *TodoHandler {
 }
 
 func (t *TodoHandler) index(w http.ResponseWriter, r *http.Request) {
-	t.templ.ExecuteTemplate(w, "index.gohtml", t.service.Todos())
+	if err := t.templ.ExecuteTemplate(w, "index.gohtml", t.service.Todos()); err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+	}
 }
 
 func (t *TodoHandler) add(w http.ResponseWriter, r *http.Request) {
@@ -77,7 +80,7 @@ func (t *TodoHandler) toggle(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
-	t.templ.ExecuteTemplate(w, "todo.gohtml", t.service.Toggle(id))
+	t.templ.ExecuteTemplate(w, "item.gohtml", t.service.Toggle(id))
 }
 
 func (t *TodoHandler) delete(w http.ResponseWriter, r *http.Request) {
@@ -87,6 +90,14 @@ func (t *TodoHandler) delete(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	t.service.Delete(id)
+}
+
+func (t *TodoHandler) sortIndex(w http.ResponseWriter, r *http.Request) {
+	r.ParseForm()
+	t.service.ReOrder(r.Form["id"])
+	if err := t.templ.ExecuteTemplate(w, "items.gohtml", t.service.Todos()); err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+	}
 }
 
 func newStaticHandler() (http.Handler, error) {

@@ -1,6 +1,7 @@
 package todo
 
 import (
+	"log"
 	"time"
 
 	"github.com/google/uuid"
@@ -35,8 +36,29 @@ func (s *Service) Todos() []Todo {
 }
 
 func (s *Service) Delete(id uuid.UUID) {
-	i := slices.IndexFunc(s.todos, func(todo Todo) bool {
+	i := s.indexOf(id)
+	s.todos = append(s.todos[:i], s.todos[i+1:]...)
+}
+
+func (s *Service) ReOrder(ids []string) {
+
+	var uuids []uuid.UUID
+	for _, id := range ids {
+		uuids = append(uuids, uuid.MustParse(id))
+	}
+
+	log.Println("sorting with", uuids)
+
+	var newList []Todo
+	for _, id := range uuids {
+		newList = append(newList, s.todos[s.indexOf(id)])
+	}
+
+	s.todos = newList
+}
+
+func (s *Service) indexOf(id uuid.UUID) int {
+	return slices.IndexFunc(s.todos, func(todo Todo) bool {
 		return todo.ID == id
 	})
-	s.todos = append(s.todos[:i], s.todos[i+1:]...)
 }

@@ -7,29 +7,32 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Courier+Prime:wght@400;700&display=swap" rel="stylesheet">
+    <!-- jsDelivr :: Sortable :: Latest (https://www.jsdelivr.com/package/npm/sortablejs) -->
+    <script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
 </head>
 <body hx-boost="true">
 <section>
     <h1>Todos</h1>
-
-    <table>
-        <thead>
-        <th></th>
-        <th>Description</th>
-        <th>Date added</th>
-        <th></th>
-        </thead>
-        <tbody>
-        {{range .}}
-            {{template "todo" .}}
-        {{end}}
-        </tbody>
-    </table>
-
+        <form hx-post="/" hx-trigger="end">
+            {{template "items_component" .}}
+        </form>
     <form method="post" action="/add">
         <label>Description <input type="text" name="description"/></label>
         <input type="submit" value="Add"/>
     </form>
 </section>
+<script>
+    htmx.onLoad(function(content) {
+        var sortables = content.querySelectorAll(".sortable");
+        console.log('got my sortables', sortables)
+        for (var i = 0; i < sortables.length; i++) {
+            var sortable = sortables[i];
+            new Sortable(sortable, {
+                animation: 150,
+                ghostClass: 'blue-background-class'
+            });
+        }
+    })
+</script>
 </body>
 </html>

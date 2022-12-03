@@ -1,0 +1,8 @@
+{{define "item_component"}}
+    <li>
+        <input type="hidden"name="id" value="{{.ID}}" />
+        <input type="checkbox" hx-post="/toggle/{{.ID}}" {{if .Complete}} checked {{end}} />
+        <td>{{.Description}}</td>
+        <td><button hx-target="closest li"  hx-swap="outerHTML" hx-delete="/{{.ID}}">🗑</button></td>
+    </li>
+{{end}}
