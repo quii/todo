@@ -36,6 +36,8 @@ section {
 
 body {
     font-family: 'Courier Prime', monospace;
+    font-size: 20px;
+    background-color: lightyellow;
 }
 table {
     border: solid 1px blueviolet;
@@ -58,4 +60,11 @@ table tbody td {
 h1 {
     text-align: center;
     font-size: 5em;
+    margin: 0;
+    padding: 0;
+}
+
+.sortable div {
+    padding: 1em 0 1em 0;
+    border-bottom: 4px dotted darkred;
 }

@@ -3,6 +3,7 @@
     <title>todo</title>
     <meta charset="UTF-8"/>
     <script src="/static/htmx.min.js"></script>
+    <script src="/static/todo.js"></script>
     <link rel=stylesheet href="/static/styles.css"/>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -21,18 +22,5 @@
         <input type="submit" value="Add"/>
     </form>
 </section>
-<script>
-    htmx.onLoad(function (content) {
-        var sortables = content.querySelectorAll(".sortable");
-        console.log('got my sortables', sortables)
-        for (var i = 0; i < sortables.length; i++) {
-            var sortable = sortables[i];
-            new Sortable(sortable, {
-                animation: 150,
-                ghostClass: 'blue-background-class'
-            });
-        }
-    })
-</script>
 </body>
 </html>

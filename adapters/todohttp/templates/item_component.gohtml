@@ -1,8 +1,8 @@
 {{define "item_component"}}
     <div>
         <input type="hidden" name="id" value="{{.ID}}"/>
+        <button hx-target="closest div" hx-swap="outerHTML" hx-delete="/{{.ID}}">❌</button>
         <input hx-target="closest div" type="checkbox" hx-post="/toggle/{{.ID}}" {{if .Complete}} checked {{end}} />
         {{.Description}}
-        <button hx-target="closest div" hx-swap="outerHTML" hx-delete="/{{.ID}}">🗑</button>
     </div>
 {{end}}
