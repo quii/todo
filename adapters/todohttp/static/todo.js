@@ -4,7 +4,7 @@ htmx.onLoad(function (content) {
         var sortable = sortables[i];
         new Sortable(sortable, {
             animation: 150,
-            ghostClass: 'blue-background-class'
+            chosenClass: 'dragClass'
         });
     }
 })

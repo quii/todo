@@ -26,7 +26,7 @@
         {{template "items_component" .}}
     </form>
     <form method="post" action="/add">
-        <label>Description <input type="text" name="description"/></label>
+        <label>Description <input type="text" minlength="3" name="description" autofocus/></label>
         <input type="submit" value="Add"/>
     </form>
 </section>

@@ -46,7 +46,6 @@ func (s *Service) Delete(id uuid.UUID) {
 }
 
 func (s *Service) ReOrder(ids []string) {
-
 	var uuids []uuid.UUID
 	for _, id := range ids {
 		uuids = append(uuids, uuid.MustParse(id))
@@ -60,12 +59,6 @@ func (s *Service) ReOrder(ids []string) {
 	s.todos = newList
 }
 
-func (s *Service) indexOf(id uuid.UUID) int {
-	return slices.IndexFunc(s.todos, func(todo Todo) bool {
-		return todo.ID == id
-	})
-}
-
 func (s *Service) Search(search string) []Todo {
 	search = strings.ToLower(search)
 	var results []Todo
@@ -75,4 +68,10 @@ func (s *Service) Search(search string) []Todo {
 		}
 	}
 	return results
+}
+
+func (s *Service) indexOf(id uuid.UUID) int {
+	return slices.IndexFunc(s.todos, func(todo Todo) bool {
+		return todo.ID == id
+	})
 }
