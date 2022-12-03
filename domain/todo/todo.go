@@ -19,8 +19,13 @@ type Service struct {
 	todos []Todo
 }
 
-func (s *Service) Add(item Todo) {
-	s.todos = append(s.todos, item)
+func (s *Service) Add(description string) {
+	s.todos = append(s.todos, Todo{
+		ID:          uuid.New(),
+		Description: description,
+		CreatedAt:   time.Now(),
+		Complete:    false,
+	})
 }
 
 func (s *Service) Toggle(id uuid.UUID) Todo {

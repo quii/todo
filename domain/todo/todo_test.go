@@ -4,7 +4,6 @@ import (
 	"testing"
 
 	"github.com/alecthomas/assert/v2"
-	"github.com/google/uuid"
 	"github.com/quii/todo/domain/todo"
 )
 
@@ -13,17 +12,15 @@ func TestService(t *testing.T) {
 		service := todo.Service{}
 		assert.Equal(t, 0, len(service.Todos()))
 
-		id := uuid.New()
-		service.Add(todo.Todo{
-			ID: id,
-		})
-
-		service.Add(todo.Todo{ID: uuid.New()})
-		service.Add(todo.Todo{ID: uuid.New()})
-		service.Add(todo.Todo{ID: uuid.New()})
+		someTask := "kill react"
+		service.Add(someTask)
+		service.Add("blah blah 1")
+		service.Add("blah blah 2")
+		service.Add("blah blah 3")
 
 		todos := service.Todos()
 		assert.False(t, todos[0].Complete)
+		id := todos[0].ID
 
 		service.Toggle(id)
 

@@ -4,9 +4,7 @@ import (
 	"embed"
 	"html/template"
 	"io/fs"
-	"log"
 	"net/http"
-	"time"
 
 	"github.com/google/uuid"
 	"github.com/gorilla/mux"
@@ -66,13 +64,7 @@ func (t *TodoHandler) index(w http.ResponseWriter, r *http.Request) {
 
 func (t *TodoHandler) add(w http.ResponseWriter, r *http.Request) {
 	r.ParseForm()
-	todo := todo.Todo{
-		ID:          uuid.New(),
-		Description: r.FormValue("description"),
-		CreatedAt:   time.Now(),
-		Complete:    false,
-	}
-	t.service.Add(todo)
+	t.service.Add(r.FormValue("description"))
 	http.Redirect(w, r, "/", http.StatusSeeOther)
 }
 
@@ -97,11 +89,6 @@ func (t *TodoHandler) delete(w http.ResponseWriter, r *http.Request) {
 func (t *TodoHandler) sortIndex(w http.ResponseWriter, r *http.Request) {
 	r.ParseForm()
 	t.service.ReOrder(r.Form["id"])
-
-	if len(r.Form["id"]) != len(t.service.Todos()) {
-		log.Println("for some reason, the form sent a different number of ids than i expected")
-	}
-
 	if err := t.templ.ExecuteTemplate(w, "items.gohtml", t.service.Todos()); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
