@@ -64,6 +64,10 @@ h1 {
     padding: 0;
 }
 
+.done {
+    text-decoration: line-through;
+}
+
 .sortable div {
     padding: 1em 0 1em 0;
     border-bottom: 4px dotted darkred;
