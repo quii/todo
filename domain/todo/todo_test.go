@@ -9,7 +9,7 @@ import (
 
 func TestService(t *testing.T) {
 	t.Run("can add todo and toggle completion", func(t *testing.T) {
-		service := todo.Service{}
+		service := todo.List{}
 		assert.Equal(t, 0, len(service.Todos()))
 
 		someTask := "kill react"
@@ -22,12 +22,12 @@ func TestService(t *testing.T) {
 		assert.False(t, todos[0].Complete)
 		id := todos[0].ID
 
-		service.Toggle(id)
+		service.ToggleDone(id)
 
 		todos = service.Todos()
 		assert.True(t, todos[0].Complete)
 
-		service.Toggle(id)
+		service.ToggleDone(id)
 
 		todos = service.Todos()
 		assert.False(t, todos[0].Complete)

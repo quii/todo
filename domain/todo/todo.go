@@ -15,11 +15,11 @@ type Todo struct {
 	Complete    bool
 }
 
-type Service struct {
+type List struct {
 	todos []Todo
 }
 
-func (s *Service) Add(description string) {
+func (s *List) Add(description string) {
 	s.todos = append(s.todos, Todo{
 		ID:          uuid.New(),
 		Description: description,
@@ -27,7 +27,7 @@ func (s *Service) Add(description string) {
 	})
 }
 
-func (s *Service) Toggle(id uuid.UUID) Todo {
+func (s *List) ToggleDone(id uuid.UUID) Todo {
 	i := slices.IndexFunc(s.todos, func(todo Todo) bool {
 		return todo.ID == id
 	})
@@ -35,16 +35,16 @@ func (s *Service) Toggle(id uuid.UUID) Todo {
 	return s.todos[i]
 }
 
-func (s *Service) Todos() []Todo {
+func (s *List) Todos() []Todo {
 	return s.todos
 }
 
-func (s *Service) Delete(id uuid.UUID) {
+func (s *List) Delete(id uuid.UUID) {
 	i := s.indexOf(id)
 	s.todos = append(s.todos[:i], s.todos[i+1:]...)
 }
 
-func (s *Service) ReOrder(ids []string) {
+func (s *List) ReOrder(ids []string) {
 	var uuids []uuid.UUID
 	for _, id := range ids {
 		uuids = append(uuids, uuid.MustParse(id))
@@ -58,7 +58,7 @@ func (s *Service) ReOrder(ids []string) {
 	s.todos = newList
 }
 
-func (s *Service) Search(search string) []Todo {
+func (s *List) Search(search string) []Todo {
 	search = strings.ToLower(search)
 	var results []Todo
 	for _, todo := range s.todos {
@@ -69,7 +69,7 @@ func (s *Service) Search(search string) []Todo {
 	return results
 }
 
-func (s *Service) indexOf(id uuid.UUID) int {
+func (s *List) indexOf(id uuid.UUID) int {
 	return slices.IndexFunc(s.todos, func(todo Todo) bool {
 		return todo.ID == id
 	})

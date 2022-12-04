@@ -8,12 +8,12 @@ import (
 )
 
 func main() {
-	service := todo.Service{}
-	service.Add("Bake a cake")
-	service.Add("Feed the cat")
-	service.Add("Take out the rubbish")
+	list := todo.List{}
+	list.Add("Bake a cake")
+	list.Add("Feed the cat")
+	list.Add("Take out the rubbish")
 
-	handler := todohttp.NewTodoHandler(&service)
+	handler := todohttp.NewTodoHandler(&list)
 
 	http.ListenAndServe(":8000", handler)
 }

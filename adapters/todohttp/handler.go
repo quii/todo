@@ -22,22 +22,22 @@ var (
 type TodoHandler struct {
 	http.Handler
 
-	service *todo.Service
-	templ   *template.Template
+	list  *todo.List
+	templ *template.Template
 }
 
-func NewTodoHandler(service *todo.Service) *TodoHandler {
+func NewTodoHandler(service *todo.List) *TodoHandler {
 	router := mux.NewRouter()
 	handler := &TodoHandler{
 		Handler: router,
-		service: service,
+		list:    service,
 	}
 
 	router.HandleFunc("/", handler.index).Methods(http.MethodGet)
 	router.HandleFunc("/", handler.sortIndex).Methods(http.MethodPost)
 	router.HandleFunc("/add", handler.add).Methods(http.MethodPost)
 	router.HandleFunc("/search", handler.search).Methods(http.MethodPost)
-	router.HandleFunc("/toggle/{ID}", handler.toggle).Methods(http.MethodPost)
+	router.HandleFunc("/{ID}/toggle", handler.toggle).Methods(http.MethodPost)
 	router.HandleFunc("/{ID}", handler.delete).Methods(http.MethodDelete)
 
 	staticHandler, err := newStaticHandler()
@@ -57,14 +57,14 @@ func NewTodoHandler(service *todo.Service) *TodoHandler {
 }
 
 func (t *TodoHandler) index(w http.ResponseWriter, r *http.Request) {
-	if err := t.templ.ExecuteTemplate(w, "index.gohtml", t.service.Todos()); err != nil {
+	if err := t.templ.ExecuteTemplate(w, "index.gohtml", t.list.Todos()); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
 }
 
 func (t *TodoHandler) add(w http.ResponseWriter, r *http.Request) {
 	r.ParseForm()
-	t.service.Add(r.FormValue("description"))
+	t.list.Add(r.FormValue("description"))
 	http.Redirect(w, r, "/", http.StatusSeeOther)
 }
 
@@ -74,7 +74,7 @@ func (t *TodoHandler) toggle(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
-	t.templ.ExecuteTemplate(w, "item.gohtml", t.service.Toggle(id))
+	t.templ.ExecuteTemplate(w, "item.gohtml", t.list.ToggleDone(id))
 }
 
 func (t *TodoHandler) delete(w http.ResponseWriter, r *http.Request) {
@@ -83,13 +83,13 @@ func (t *TodoHandler) delete(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
-	t.service.Delete(id)
+	t.list.Delete(id)
 }
 
 func (t *TodoHandler) sortIndex(w http.ResponseWriter, r *http.Request) {
 	r.ParseForm()
-	t.service.ReOrder(r.Form["id"])
-	if err := t.templ.ExecuteTemplate(w, "items.gohtml", t.service.Todos()); err != nil {
+	t.list.ReOrder(r.Form["id"])
+	if err := t.templ.ExecuteTemplate(w, "items.gohtml", t.list.Todos()); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
 }
@@ -97,7 +97,7 @@ func (t *TodoHandler) sortIndex(w http.ResponseWriter, r *http.Request) {
 func (t *TodoHandler) search(w http.ResponseWriter, r *http.Request) {
 	r.ParseForm()
 
-	if err := t.templ.ExecuteTemplate(w, "items.gohtml", t.service.Search(r.Form.Get("search"))); err != nil {
+	if err := t.templ.ExecuteTemplate(w, "items.gohtml", t.list.Search(r.Form.Get("search"))); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
 }
