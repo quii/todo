@@ -1,7 +1,7 @@
 {{define "item_component"}}
     <div>
         <input type="hidden" name="id" value="{{.ID}}"/>
-        <button hx-target="closest div" hx-swap="outerHTML" hx-delete="/{{.ID}}">❌</button>
-        <span {{if .Complete}} class="done" {{end}} hx-target="closest div" hx-swap="outerHTML" hx-post="/{{.ID}}/toggle">{{.Description}}</span>
+        <button hx-target="closest div" hx-swap="outerHTML" hx-delete="/todos/{{.ID}}">❌</button>
+        <span {{if .Complete}} class="done" {{end}} hx-target="closest div" hx-swap="outerHTML" hx-post="/todos/{{.ID}}/toggle">{{.Description}}</span>
     </div>
 {{end}}

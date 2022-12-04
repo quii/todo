@@ -16,16 +16,16 @@
     <h1>Todos</h1>
     <label>Search <input type="text"
                          name="search" placeholder="Begin Typing To Search"
-                         hx-post="/search"
+                         hx-get="/todos"
                          hx-trigger="keyup changed delay:500ms, search"
                          hx-target="#todos"
                          hx-replace="innerHTML"
         ></label>
 
-    <form hx-post="/" hx-trigger="end" class="sortable" id="todos">
+    <form hx-post="/todos/sort" hx-trigger="end" class="sortable" id="todos">
         {{template "items_component" .}}
     </form>
-    <form method="post" action="/add">
+    <form method="post" action="/todos">
         <label>Description <input type="text" minlength="3" name="description" autofocus/></label>
     </form>
 </section>

@@ -34,11 +34,12 @@ func NewTodoHandler(service *todo.List) *TodoHandler {
 	}
 
 	router.HandleFunc("/", handler.index).Methods(http.MethodGet)
-	router.HandleFunc("/", handler.sortIndex).Methods(http.MethodPost)
-	router.HandleFunc("/add", handler.add).Methods(http.MethodPost)
-	router.HandleFunc("/search", handler.search).Methods(http.MethodPost)
-	router.HandleFunc("/{ID}/toggle", handler.toggle).Methods(http.MethodPost)
-	router.HandleFunc("/{ID}", handler.delete).Methods(http.MethodDelete)
+
+	router.HandleFunc("/todos", handler.add).Methods(http.MethodPost)
+	router.HandleFunc("/todos", handler.search).Methods(http.MethodGet)
+	router.HandleFunc("/todos/{ID}/toggle", handler.toggle).Methods(http.MethodPost)
+	router.HandleFunc("/todos/{ID}", handler.delete).Methods(http.MethodDelete)
+	router.HandleFunc("/todos/sort", handler.reOrder).Methods(http.MethodPost)
 
 	staticHandler, err := newStaticHandler()
 	if err != nil {
@@ -86,7 +87,7 @@ func (t *TodoHandler) delete(w http.ResponseWriter, r *http.Request) {
 	t.list.Delete(id)
 }
 
-func (t *TodoHandler) sortIndex(w http.ResponseWriter, r *http.Request) {
+func (t *TodoHandler) reOrder(w http.ResponseWriter, r *http.Request) {
 	r.ParseForm()
 	t.list.ReOrder(r.Form["id"])
 	if err := t.templ.ExecuteTemplate(w, "items.gohtml", t.list.Todos()); err != nil {
@@ -95,9 +96,7 @@ func (t *TodoHandler) sortIndex(w http.ResponseWriter, r *http.Request) {
 }
 
 func (t *TodoHandler) search(w http.ResponseWriter, r *http.Request) {
-	r.ParseForm()
-
-	if err := t.templ.ExecuteTemplate(w, "items.gohtml", t.list.Search(r.Form.Get("search"))); err != nil {
+	if err := t.templ.ExecuteTemplate(w, "items.gohtml", t.list.Search(r.URL.Query().Get("search"))); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
 }
