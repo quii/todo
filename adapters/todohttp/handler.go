@@ -2,6 +2,7 @@ package todohttp
 
 import (
 	"embed"
+	"fmt"
 	"html/template"
 	"io/fs"
 	"net/http"
@@ -26,7 +27,7 @@ type TodoHandler struct {
 	templ *template.Template
 }
 
-func NewTodoHandler(service *todo.List) *TodoHandler {
+func NewTodoHandler(service *todo.List) (*TodoHandler, error) {
 	router := mux.NewRouter()
 	handler := &TodoHandler{
 		Handler: router,
@@ -43,18 +44,18 @@ func NewTodoHandler(service *todo.List) *TodoHandler {
 
 	staticHandler, err := newStaticHandler()
 	if err != nil {
-		panic(err)
+		return nil, fmt.Errorf("problem making static resources handler: %w", err)
 	}
 	router.PathPrefix("/static/").Handler(http.StripPrefix("/static/", staticHandler))
 
 	templ, err := template.ParseFS(todoTemplates, "templates/*.gohtml")
 	if err != nil {
-		panic(err)
+		return nil, err
 	}
 
 	handler.templ = templ
 
-	return handler
+	return handler, nil
 }
 
 func (t *TodoHandler) index(w http.ResponseWriter, r *http.Request) {
