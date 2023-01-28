@@ -50,7 +50,8 @@ func NewTodoHandler(service *todo.List) (*TodoHandler, error) {
 	}
 	router.PathPrefix("/static/").Handler(http.StripPrefix("/static/", staticHandler))
 
-	templ, err := template.ParseFS(todoTemplates, "templates/*.gohtml")
+	templ, err := template.ParseFS(todoTemplates, "templates/*/*.gohtml", "templates/*.gohtml")
+	fmt.Println(templ)
 	if err != nil {
 		return nil, err
 	}
@@ -148,7 +149,7 @@ func (t *TodoHandler) renderEditTodo(w http.ResponseWriter, item todo.Todo) {
 }
 
 func (t *TodoHandler) renderTodo(w http.ResponseWriter, todo todo.Todo) {
-	if err := t.templ.ExecuteTemplate(w, "todo", todo); err != nil {
+	if err := t.templ.ExecuteTemplate(w, "view_todo", todo); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
 }

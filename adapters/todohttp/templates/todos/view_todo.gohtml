@@ -1,4 +1,4 @@
-{{define "todo"}}
+{{define "view_todo"}}
     <div data-description="{{.Description}}">
         <input type="hidden" name="id" value="{{.ID}}"/>
         <button hx-target="closest div" hx-swap="outerHTML" hx-delete="/todos/{{.ID}}">❌</button>
