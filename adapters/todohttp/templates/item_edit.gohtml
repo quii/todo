@@ -1,0 +1,15 @@
+{{define "item_edit"}}
+    <div data-description="{{.Description}}">
+        <input type="hidden" name="id" value="{{.ID}}"/>
+        <button disabled>❌</button>
+        <button disabled>📝</button>
+        <form hx-patch="todos/{{.ID}}"
+              hx-target="closest div"
+              hx-swap="outerHTML"
+            >
+            <input type="text" name="name">
+            <input type="submit">
+        </form>
+        <span {{if .Complete}} class="done" {{end}}>{{.Description}}</span>
+    </div>
+{{end}}

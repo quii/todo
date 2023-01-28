@@ -38,6 +38,7 @@ func NewTodoHandler(service *todo.List) (*TodoHandler, error) {
 
 	router.HandleFunc("/todos", handler.add).Methods(http.MethodPost)
 	router.HandleFunc("/todos", handler.search).Methods(http.MethodGet)
+	router.HandleFunc("/todos/{ID}/edit", handler.edit).Methods(http.MethodGet)
 	router.HandleFunc("/todos/{ID}/toggle", handler.toggle).Methods(http.MethodPost)
 	router.HandleFunc("/todos/{ID}", handler.delete).Methods(http.MethodDelete)
 	router.HandleFunc("/todos/sort", handler.reOrder).Methods(http.MethodPost)
@@ -115,7 +116,23 @@ func (t *TodoHandler) rename(w http.ResponseWriter, r *http.Request) {
 	}
 
 	newName := r.Form["name"][0]
-	t.list.Rename(id, newName)
+	todo := t.list.Rename(id, newName)
+
+	if err := t.templ.ExecuteTemplate(w, "item_component", todo); err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+	}
+}
+
+func (t *TodoHandler) edit(w http.ResponseWriter, r *http.Request) {
+	id, err := uuid.Parse(mux.Vars(r)["ID"])
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+	item := t.list.Get(id)
+	if err := t.templ.ExecuteTemplate(w, "item_edit", item); err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+	}
 }
 
 func newStaticHandler() (http.Handler, error) {

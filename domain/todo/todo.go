@@ -82,3 +82,7 @@ func (s *List) indexOf(id uuid.UUID) int {
 		return todo.ID == id
 	})
 }
+
+func (s *List) Get(id uuid.UUID) Todo {
+	return s.todos[s.indexOf(id)]
+}
