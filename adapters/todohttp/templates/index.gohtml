@@ -23,7 +23,7 @@
         ></label>
 
     <form hx-post="/todos/sort" hx-trigger="end" class="sortable" id="todos">
-        {{template "items_component" .}}
+        {{template "todos" .}}
     </form>
     <form method="post" action="/todos">
         <label>Description <input type="text" minlength="3" name="description" autofocus/></label>

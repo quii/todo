@@ -78,7 +78,7 @@ func (t *TodoHandler) toggle(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
-	t.templ.ExecuteTemplate(w, "item_component", t.list.ToggleDone(id))
+	t.templ.ExecuteTemplate(w, "todo", t.list.ToggleDone(id))
 }
 
 func (t *TodoHandler) delete(w http.ResponseWriter, r *http.Request) {
@@ -93,7 +93,7 @@ func (t *TodoHandler) delete(w http.ResponseWriter, r *http.Request) {
 func (t *TodoHandler) reOrder(w http.ResponseWriter, r *http.Request) {
 	r.ParseForm()
 	t.list.ReOrder(r.Form["id"])
-	if err := t.templ.ExecuteTemplate(w, "items_component", t.list.Todos()); err != nil {
+	if err := t.templ.ExecuteTemplate(w, "todos", t.list.Todos()); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
 }
@@ -102,7 +102,7 @@ func (t *TodoHandler) search(w http.ResponseWriter, r *http.Request) {
 	searchTerm := r.URL.Query().Get("search")
 	results := t.list.Search(searchTerm)
 	fmt.Println(results)
-	if err := t.templ.ExecuteTemplate(w, "items_component", results); err != nil {
+	if err := t.templ.ExecuteTemplate(w, "todos", results); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
 }
@@ -118,7 +118,7 @@ func (t *TodoHandler) rename(w http.ResponseWriter, r *http.Request) {
 	newName := r.Form["name"][0]
 	todo := t.list.Rename(id, newName)
 
-	if err := t.templ.ExecuteTemplate(w, "item_component", todo); err != nil {
+	if err := t.templ.ExecuteTemplate(w, "todo", todo); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
 }
@@ -130,7 +130,7 @@ func (t *TodoHandler) edit(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	item := t.list.Get(id)
-	if err := t.templ.ExecuteTemplate(w, "item_edit", item); err != nil {
+	if err := t.templ.ExecuteTemplate(w, "edit_todo", item); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
 }
