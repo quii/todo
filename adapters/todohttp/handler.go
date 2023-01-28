@@ -78,7 +78,7 @@ func (t *TodoHandler) toggle(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
-	t.templ.ExecuteTemplate(w, "todo", t.list.ToggleDone(id))
+	t.renderTodo(w, t.list.ToggleDone(id))
 }
 
 func (t *TodoHandler) delete(w http.ResponseWriter, r *http.Request) {
@@ -93,18 +93,14 @@ func (t *TodoHandler) delete(w http.ResponseWriter, r *http.Request) {
 func (t *TodoHandler) reOrder(w http.ResponseWriter, r *http.Request) {
 	r.ParseForm()
 	t.list.ReOrder(r.Form["id"])
-	if err := t.templ.ExecuteTemplate(w, "todos", t.list.Todos()); err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-	}
+	t.renderTodos(w, t.list.Todos())
 }
 
 func (t *TodoHandler) search(w http.ResponseWriter, r *http.Request) {
 	searchTerm := r.URL.Query().Get("search")
 	results := t.list.Search(searchTerm)
 	fmt.Println(results)
-	if err := t.templ.ExecuteTemplate(w, "todos", results); err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-	}
+	t.renderTodos(w, results)
 }
 
 func (t *TodoHandler) rename(w http.ResponseWriter, r *http.Request) {
@@ -118,9 +114,7 @@ func (t *TodoHandler) rename(w http.ResponseWriter, r *http.Request) {
 	newName := r.Form["name"][0]
 	todo := t.list.Rename(id, newName)
 
-	if err := t.templ.ExecuteTemplate(w, "todo", todo); err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-	}
+	t.renderTodo(w, todo)
 }
 
 func (t *TodoHandler) edit(w http.ResponseWriter, r *http.Request) {
@@ -130,9 +124,7 @@ func (t *TodoHandler) edit(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	item := t.list.Get(id)
-	if err := t.templ.ExecuteTemplate(w, "edit_todo", item); err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-	}
+	t.renderEditTodo(w, item)
 }
 
 func newStaticHandler() (http.Handler, error) {
@@ -141,4 +133,22 @@ func newStaticHandler() (http.Handler, error) {
 		return nil, err
 	}
 	return http.FileServer(http.FS(lol)), nil
+}
+
+func (t *TodoHandler) renderTodos(w http.ResponseWriter, results []todo.Todo) {
+	if err := t.templ.ExecuteTemplate(w, "todos", results); err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+	}
+}
+
+func (t *TodoHandler) renderEditTodo(w http.ResponseWriter, item todo.Todo) {
+	if err := t.templ.ExecuteTemplate(w, "edit_todo", item); err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+	}
+}
+
+func (t *TodoHandler) renderTodo(w http.ResponseWriter, todo todo.Todo) {
+	if err := t.templ.ExecuteTemplate(w, "todo", todo); err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+	}
 }
