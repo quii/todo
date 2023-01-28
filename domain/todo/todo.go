@@ -15,6 +15,14 @@ type Todo struct {
 	Complete    bool
 }
 
+func (s *List) Rename(id uuid.UUID, name string) Todo {
+	i := slices.IndexFunc(s.todos, func(todo Todo) bool {
+		return todo.ID == id
+	})
+	s.todos[i].Description = name
+	return s.todos[i]
+}
+
 type List struct {
 	todos []Todo
 }

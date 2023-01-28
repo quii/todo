@@ -41,6 +41,7 @@ func NewTodoHandler(service *todo.List) (*TodoHandler, error) {
 	router.HandleFunc("/todos/{ID}/toggle", handler.toggle).Methods(http.MethodPost)
 	router.HandleFunc("/todos/{ID}", handler.delete).Methods(http.MethodDelete)
 	router.HandleFunc("/todos/sort", handler.reOrder).Methods(http.MethodPost)
+	router.HandleFunc("/todos/{ID}", handler.rename).Methods(http.MethodPatch)
 
 	staticHandler, err := newStaticHandler()
 	if err != nil {
@@ -59,7 +60,7 @@ func NewTodoHandler(service *todo.List) (*TodoHandler, error) {
 }
 
 func (t *TodoHandler) index(w http.ResponseWriter, r *http.Request) {
-	if err := t.templ.ExecuteTemplate(w, "index.gohtml", t.list.Todos()); err != nil {
+	if err := t.templ.ExecuteTemplate(w, "index", t.list.Todos()); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
 }
@@ -76,7 +77,7 @@ func (t *TodoHandler) toggle(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
-	t.templ.ExecuteTemplate(w, "item.gohtml", t.list.ToggleDone(id))
+	t.templ.ExecuteTemplate(w, "item_component", t.list.ToggleDone(id))
 }
 
 func (t *TodoHandler) delete(w http.ResponseWriter, r *http.Request) {
@@ -91,15 +92,30 @@ func (t *TodoHandler) delete(w http.ResponseWriter, r *http.Request) {
 func (t *TodoHandler) reOrder(w http.ResponseWriter, r *http.Request) {
 	r.ParseForm()
 	t.list.ReOrder(r.Form["id"])
-	if err := t.templ.ExecuteTemplate(w, "items.gohtml", t.list.Todos()); err != nil {
+	if err := t.templ.ExecuteTemplate(w, "items_component", t.list.Todos()); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
 }
 
 func (t *TodoHandler) search(w http.ResponseWriter, r *http.Request) {
-	if err := t.templ.ExecuteTemplate(w, "items.gohtml", t.list.Search(r.URL.Query().Get("search"))); err != nil {
+	searchTerm := r.URL.Query().Get("search")
+	results := t.list.Search(searchTerm)
+	fmt.Println(results)
+	if err := t.templ.ExecuteTemplate(w, "items_component", results); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
+}
+
+func (t *TodoHandler) rename(w http.ResponseWriter, r *http.Request) {
+	r.ParseForm()
+	id, err := uuid.Parse(mux.Vars(r)["ID"])
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	newName := r.Form["name"][0]
+	t.list.Rename(id, newName)
 }
 
 func newStaticHandler() (http.Handler, error) {
