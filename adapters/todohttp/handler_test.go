@@ -28,19 +28,30 @@ func TestNewTodoHandler(t *testing.T) {
 	rod := rod.New().Timeout(20 * time.Second).ControlURL(launcher).MustConnect()
 	page := rod.MustPage(server.URL)
 
-	el := page.MustElement(`[name="description"]`)
-	el.MustInput("Eat cheese")
-	el.MustType(input.Enter)
-	page = rod.MustPage(server.URL)
+	t.Run("add some todos", func(t *testing.T) {
+		el := page.MustElement(`[name="description"]`)
+		el.MustInput("Eat cheese")
+		el.MustType(input.Enter)
+		page = rod.MustPage(server.URL)
 
-	el = page.MustElement(`[name="description"]`)
-	el.MustInput("Drink port")
-	el.MustType(input.Enter)
-	page = rod.MustPage(server.URL)
+		el = page.MustElement(`[name="description"]`)
+		el.MustInput("Drink port")
+		el.MustType(input.Enter)
+		page = rod.MustPage(server.URL)
 
-	assert.Equal(t, 2, len(todoList.Todos()))
-	assert.Equal(t, "Eat cheese", todoList.Todos()[0].Description)
-	assert.Equal(t, "Drink port", todoList.Todos()[1].Description)
+		assert.Equal(t, 2, len(todoList.Todos()))
+		assert.Equal(t, "Eat cheese", todoList.Todos()[0].Description)
+		assert.Equal(t, "Drink port", todoList.Todos()[1].Description)
+	})
+
+	t.Run("edit a todo", func(t *testing.T) {
+		page.MustElement(`[data-description="Eat cheese"] .edit`).MustClick()
+		page.MustElement(`[data-description="Eat cheese"] input[type="text"]`).MustInput("Eat cheese and crackers")
+		page.MustElement(`[data-description="Eat cheese"] input[type="text"]`).MustType(input.Enter)
+		page = rod.MustPage(server.URL)
+
+		assert.Equal(t, "Eat cheese and crackers", todoList.Todos()[0].Description)
+	})
 
 	t.Run("todo: attempts at testing drag and drog", func(t *testing.T) {
 		t.Skip("pft")

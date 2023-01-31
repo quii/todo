@@ -38,10 +38,10 @@ func NewTodoHandler(service *todo.List) (*TodoHandler, error) {
 
 	router.HandleFunc("/todos", handler.add).Methods(http.MethodPost)
 	router.HandleFunc("/todos", handler.search).Methods(http.MethodGet)
+	router.HandleFunc("/todos/sort", handler.reOrder).Methods(http.MethodPost)
 	router.HandleFunc("/todos/{ID}/edit", handler.edit).Methods(http.MethodGet)
 	router.HandleFunc("/todos/{ID}/toggle", handler.toggle).Methods(http.MethodPost)
 	router.HandleFunc("/todos/{ID}", handler.delete).Methods(http.MethodDelete)
-	router.HandleFunc("/todos/sort", handler.reOrder).Methods(http.MethodPost)
 	router.HandleFunc("/todos/{ID}", handler.rename).Methods(http.MethodPatch)
 
 	staticHandler, err := newStaticHandler()
@@ -51,7 +51,6 @@ func NewTodoHandler(service *todo.List) (*TodoHandler, error) {
 	router.PathPrefix("/static/").Handler(http.StripPrefix("/static/", staticHandler))
 
 	templ, err := template.ParseFS(todoTemplates, "templates/*/*.gohtml", "templates/*.gohtml")
-	fmt.Println(templ)
 	if err != nil {
 		return nil, err
 	}
