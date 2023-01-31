@@ -1,6 +1,7 @@
 package todohttp_test
 
 import (
+	"fmt"
 	"log"
 	"net/http/httptest"
 	"testing"
@@ -16,6 +17,25 @@ import (
 
 import "github.com/go-rod/rod"
 
+type TodoPage struct {
+	Rod  *rod.Browser
+	Page *rod.Page
+	URL  string
+}
+
+func (t *TodoPage) Add(description string) {
+	t.Page.MustElement(`[name="description"]`).MustInput(description).MustType(input.Enter)
+	t.Page = t.Rod.MustPage(t.URL)
+}
+
+func (t *TodoPage) Edit(from, to string) {
+	el := fmt.Sprintf(`[data-description="%s"]`, from)
+	t.Page.MustElement(el + ` .edit`).MustClick()
+	t.Page.MustElement(el + ` input[type="text"]`).MustInput(to)
+	t.Page.MustElement(el + ` input[type="text"]`).MustType(input.Enter)
+	t.Page = t.Rod.MustPage(t.URL)
+}
+
 func TestNewTodoHandler(t *testing.T) {
 	todoList := &todo.List{}
 	handler, err := todohttp.NewTodoHandler(todoList)
@@ -28,16 +48,15 @@ func TestNewTodoHandler(t *testing.T) {
 	rod := rod.New().Timeout(20 * time.Second).ControlURL(launcher).MustConnect()
 	page := rod.MustPage(server.URL)
 
-	t.Run("add some todos", func(t *testing.T) {
-		el := page.MustElement(`[name="description"]`)
-		el.MustInput("Eat cheese")
-		el.MustType(input.Enter)
-		page = rod.MustPage(server.URL)
+	todoListPage := &TodoPage{
+		Rod:  rod,
+		Page: page,
+		URL:  server.URL,
+	}
 
-		el = page.MustElement(`[name="description"]`)
-		el.MustInput("Drink port")
-		el.MustType(input.Enter)
-		page = rod.MustPage(server.URL)
+	t.Run("add some todos", func(t *testing.T) {
+		todoListPage.Add("Eat cheese")
+		todoListPage.Add("Drink port")
 
 		assert.Equal(t, 2, len(todoList.Todos()))
 		assert.Equal(t, "Eat cheese", todoList.Todos()[0].Description)
@@ -45,11 +64,7 @@ func TestNewTodoHandler(t *testing.T) {
 	})
 
 	t.Run("edit a todo", func(t *testing.T) {
-		page.MustElement(`[data-description="Eat cheese"] .edit`).MustClick()
-		page.MustElement(`[data-description="Eat cheese"] input[type="text"]`).MustInput("Eat cheese and crackers")
-		page.MustElement(`[data-description="Eat cheese"] input[type="text"]`).MustType(input.Enter)
-		page = rod.MustPage(server.URL)
-
+		todoListPage.Edit("Eat cheese", "Eat cheese and crackers")
 		assert.Equal(t, "Eat cheese and crackers", todoList.Todos()[0].Description)
 	})
 
