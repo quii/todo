@@ -36,6 +36,18 @@ func (t *TodoPage) Edit(from, to string) {
 	t.Page = t.Rod.MustPage(t.URL)
 }
 
+func (t *TodoPage) Delete(description string) {
+	el := fmt.Sprintf(`[data-description="%s"]`, description)
+	t.Page.MustElement(el + ` .delete`).MustClick()
+	t.Page = t.Rod.MustPage(t.URL)
+}
+
+func (t *TodoPage) Toggle(description string) {
+	el := fmt.Sprintf(`[data-description="%s"]`, description)
+	t.Page.MustElement(el + ` span`).MustClick()
+	t.Page = t.Rod.MustPage(t.URL)
+}
+
 func TestNewTodoHandler(t *testing.T) {
 	todoList := &todo.List{}
 	handler, err := todohttp.NewTodoHandler(todoList)
@@ -66,6 +78,28 @@ func TestNewTodoHandler(t *testing.T) {
 	t.Run("edit a todo", func(t *testing.T) {
 		todoListPage.Edit("Eat cheese", "Eat cheese and crackers")
 		assert.Equal(t, "Eat cheese and crackers", todoList.Todos()[0].Description)
+	})
+
+	t.Run("delete a todo", func(t *testing.T) {
+		todoListPage.Add("Delete react")
+		assert.Equal(t, 3, len(todoList.Todos()))
+		assert.Equal(t, "Eat cheese and crackers", todoList.Todos()[0].Description)
+		assert.Equal(t, "Drink port", todoList.Todos()[1].Description)
+		assert.Equal(t, "Delete react", todoList.Todos()[2].Description)
+		todoListPage.Delete("Delete react")
+		assert.Equal(t, 2, len(todoList.Todos()))
+		assert.Equal(t, "Eat cheese and crackers", todoList.Todos()[0].Description)
+		assert.Equal(t, "Drink port", todoList.Todos()[1].Description)
+	})
+
+	t.Run("mark a todo as done", func(t *testing.T) {
+		todoListPage.Add("Mark this as done")
+		assert.Equal(t, 3, len(todoList.Todos()))
+		assert.Equal(t, "Mark this as done", todoList.Todos()[2].Description)
+		todoListPage.Toggle("Mark this as done")
+		assert.True(t, todoList.Todos()[2].Complete)
+		todoListPage.Toggle("Mark this as done")
+		assert.False(t, todoList.Todos()[2].Complete)
 	})
 
 	t.Run("todo: attempts at testing drag and drog", func(t *testing.T) {

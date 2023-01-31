@@ -1,7 +1,7 @@
 {{define "view_todo"}}
     <div data-description="{{.Description}}">
         <input type="hidden" name="id" value="{{.ID}}"/>
-        <button hx-target="closest div" hx-swap="outerHTML" hx-delete="/todos/{{.ID}}">❌</button>
+        <button class="delete" hx-target="closest div" hx-swap="outerHTML" hx-delete="/todos/{{.ID}}">❌</button>
         <button class="edit" hx-target="closest div" hx-swap="outerHTML" hx-get="/todos/{{.ID}}/edit">📝</button>
         <span {{if .Complete}} class="done" {{end}} hx-target="closest div" hx-swap="outerHTML" hx-post="/todos/{{.ID}}/toggle">{{.Description}}</span>
     </div>
