@@ -77,6 +77,10 @@ func (s *List) Get(id uuid.UUID) Todo {
 	return s.todos[s.indexOf(id)]
 }
 
+func (s *List) Empty() {
+	s.todos = []Todo{}
+}
+
 func (s *List) indexOf(id uuid.UUID) int {
 	return slices.IndexFunc(s.todos, func(todo Todo) bool {
 		return todo.ID == id

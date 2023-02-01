@@ -110,4 +110,20 @@ func TestService(t *testing.T) {
 		assert.Equal(t, "blah blah 3", todos[2].Description)
 	})
 
+	t.Run("empty the list", func(t *testing.T) {
+		service := todo.List{}
+		service.Add("kill react")
+		service.Add("blah blah 1")
+		service.Add("blah blah 2")
+		service.Add("blah blah 3")
+
+		todos := service.Todos()
+		assert.Equal(t, 4, len(todos))
+
+		service.Empty()
+
+		todos = service.Todos()
+		assert.Equal(t, 0, len(todos))
+	})
+
 }
