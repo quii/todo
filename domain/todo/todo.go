@@ -15,14 +15,6 @@ type Todo struct {
 	Complete    bool
 }
 
-func (s *List) Rename(id uuid.UUID, name string) Todo {
-	i := slices.IndexFunc(s.todos, func(todo Todo) bool {
-		return todo.ID == id
-	})
-	s.todos[i].Description = name
-	return s.todos[i]
-}
-
 type List struct {
 	todos []Todo
 }
@@ -35,16 +27,20 @@ func (s *List) Add(description string) {
 	})
 }
 
-func (s *List) ToggleDone(id uuid.UUID) Todo {
-	i := slices.IndexFunc(s.todos, func(todo Todo) bool {
-		return todo.ID == id
-	})
-	s.todos[i].Complete = !s.todos[i].Complete
+func (s *List) Rename(id uuid.UUID, name string) Todo {
+	i := s.indexOf(id)
+	s.todos[i].Description = name
 	return s.todos[i]
 }
 
 func (s *List) Todos() []Todo {
 	return s.todos
+}
+
+func (s *List) ToggleDone(id uuid.UUID) Todo {
+	i := s.indexOf(id)
+	s.todos[i].Complete = !s.todos[i].Complete
+	return s.todos[i]
 }
 
 func (s *List) Delete(id uuid.UUID) {
@@ -77,12 +73,12 @@ func (s *List) Search(search string) []Todo {
 	return results
 }
 
+func (s *List) Get(id uuid.UUID) Todo {
+	return s.todos[s.indexOf(id)]
+}
+
 func (s *List) indexOf(id uuid.UUID) int {
 	return slices.IndexFunc(s.todos, func(todo Todo) bool {
 		return todo.ID == id
 	})
-}
-
-func (s *List) Get(id uuid.UUID) Todo {
-	return s.todos[s.indexOf(id)]
 }
