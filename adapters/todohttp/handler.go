@@ -21,11 +21,11 @@ type TodoHandler struct {
 	http.Handler
 
 	list      *todo.List
-	todoView  *views.TodoView
+	todoView  *views.ModelView[todo.Todo]
 	indexView *views.IndexView
 }
 
-func NewTodoHandler(service *todo.List, todoView *views.TodoView, indexView *views.IndexView) (*TodoHandler, error) {
+func NewTodoHandler(service *todo.List, todoView *views.ModelView[todo.Todo], indexView *views.IndexView) (*TodoHandler, error) {
 	router := mux.NewRouter()
 	handler := &TodoHandler{
 		Handler:   router,
