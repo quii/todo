@@ -61,9 +61,7 @@ func NewTodoHandler(service *todo.List) (*TodoHandler, error) {
 }
 
 func (t *TodoHandler) index(w http.ResponseWriter, r *http.Request) {
-	if err := t.templ.ExecuteTemplate(w, "index", t.list.Todos()); err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-	}
+	t.renderOr500(w, "index", t.list.Todos())
 }
 
 func (t *TodoHandler) add(w http.ResponseWriter, r *http.Request) {
@@ -99,7 +97,6 @@ func (t *TodoHandler) reOrder(w http.ResponseWriter, r *http.Request) {
 func (t *TodoHandler) search(w http.ResponseWriter, r *http.Request) {
 	searchTerm := r.URL.Query().Get("search")
 	results := t.list.Search(searchTerm)
-	fmt.Println(results)
 	t.renderTodos(w, results)
 }
 
@@ -124,7 +121,7 @@ func (t *TodoHandler) edit(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	item := t.list.Get(id)
-	t.renderEditTodo(w, item)
+	t.renderOr500(w, "edit_todo", item)
 }
 
 func newStaticHandler() (http.Handler, error) {
@@ -136,19 +133,15 @@ func newStaticHandler() (http.Handler, error) {
 }
 
 func (t *TodoHandler) renderTodos(w http.ResponseWriter, results []todo.Todo) {
-	if err := t.templ.ExecuteTemplate(w, "todos", results); err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-	}
-}
-
-func (t *TodoHandler) renderEditTodo(w http.ResponseWriter, item todo.Todo) {
-	if err := t.templ.ExecuteTemplate(w, "edit_todo", item); err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-	}
+	t.renderOr500(w, "todos", results)
 }
 
 func (t *TodoHandler) renderTodo(w http.ResponseWriter, todo todo.Todo) {
-	if err := t.templ.ExecuteTemplate(w, "view_todo", todo); err != nil {
+	t.renderOr500(w, "todo", todo)
+}
+
+func (t *TodoHandler) renderOr500(w http.ResponseWriter, templateName string, viewModel any) {
+	if err := t.templ.ExecuteTemplate(w, templateName, viewModel); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
 }
