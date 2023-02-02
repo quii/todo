@@ -8,7 +8,7 @@ import (
 )
 
 func TestService(t *testing.T) {
-	t.Run("can add todo and toggle completion", func(t *testing.T) {
+	t.Run("can add todoview and toggle completion", func(t *testing.T) {
 		service := todo.List{}
 		assert.Equal(t, 0, len(service.Todos()))
 

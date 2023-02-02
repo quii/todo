@@ -8,6 +8,7 @@ import (
 	"github.com/alecthomas/assert/v2"
 	"github.com/go-rod/rod/lib/launcher"
 	"github.com/quii/todo/adapters/todohttp"
+	"github.com/quii/todo/adapters/todohttp/views"
 	"github.com/quii/todo/domain/todo"
 )
 
@@ -15,7 +16,9 @@ import "github.com/go-rod/rod"
 
 func TestNewTodoHandler(t *testing.T) {
 	todoList := &todo.List{}
-	handler, err := todohttp.NewTodoHandler(todoList)
+	templates, err := views.NewTemplates()
+	assert.NoError(t, err)
+	handler, err := todohttp.NewTodoHandler(todoList, views.NewTodoView(templates), views.NewIndexView(templates))
 	assert.NoError(t, err)
 
 	server := httptest.NewServer(handler)
@@ -46,13 +49,13 @@ func TestNewTodoHandler(t *testing.T) {
 		assert.Equal(t, "Drink port", todoList.Todos()[1].Description)
 	})
 
-	it("can edit a todo", func(t *testing.T) {
+	it("can edit a todoview", func(t *testing.T) {
 		todoListPage.Add("Eat cheese")
 		todoListPage.Edit("Eat cheese", "Eat cheese and crackers")
 		assert.Equal(t, "Eat cheese and crackers", todoList.Todos()[0].Description)
 	})
 
-	it("can delete a todo", func(t *testing.T) {
+	it("can delete a todoview", func(t *testing.T) {
 		todoListPage.Add("Eat cheese")
 		todoListPage.Add("Drink port")
 		assert.Equal(t, 2, len(todoList.Todos()))
@@ -62,7 +65,7 @@ func TestNewTodoHandler(t *testing.T) {
 		assert.Equal(t, "Eat cheese", todoList.Todos()[0].Description)
 	})
 
-	it("can mark a todo as done", func(t *testing.T) {
+	it("can mark a todoview as done", func(t *testing.T) {
 		todoListPage.Add("Mark this as done")
 		assert.False(t, todoList.Todos()[0].Complete)
 
@@ -72,7 +75,7 @@ func TestNewTodoHandler(t *testing.T) {
 		assert.False(t, todoList.Todos()[0].Complete)
 	})
 
-	//t.Run("todo: attempts at testing drag and drog", func(t *testing.T) {
+	//t.Run("todoview: attempts at testing drag and drog", func(t *testing.T) {
 	//	t.Skip("pft")
 	//	portBox, _ := page.MustElement(`[data-description="Drink port"]`).Shape()
 	//	log.Println(portBox.OnePointInside())
