@@ -137,7 +137,7 @@ func (t *TodoHandler) renderTodos(w http.ResponseWriter, results []todo.Todo) {
 }
 
 func (t *TodoHandler) renderTodo(w http.ResponseWriter, todo todo.Todo) {
-	t.renderOr500(w, "todo", todo)
+	t.renderOr500(w, "view_todo", todo)
 }
 
 func (t *TodoHandler) renderOr500(w http.ResponseWriter, templateName string, viewModel any) {
