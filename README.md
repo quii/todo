@@ -2,6 +2,8 @@
 
 spiking out a todo list with htmx. 
 
+I have written a post describing how [HTMX is The Future](https://quii.dev/HTMX_is_the_Future) 
+
 all the fluid UI fun of an SPA with none of the pain
 
 ![image](https://user-images.githubusercontent.com/631756/205446910-2196c5e5-ffe5-418d-b468-9523d0d2d954.png)
