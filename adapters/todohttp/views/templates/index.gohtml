@@ -14,7 +14,7 @@
 <body hx-boost="true">
 <section>
     <h1>Todos</h1>
-    <label>Search <input type="text"
+    <label>Search <input type="search"
                          name="search" placeholder="Begin Typing To Search"
                          hx-get="/todos"
                          hx-trigger="keyup changed delay:500ms, search"
@@ -26,7 +26,7 @@
         {{template "todos" .}}
     </form>
     <form method="post" action="/todos">
-        <label>Description <input type="text" minlength="3" name="description" autofocus/></label>
+        <label>Description <input type="text" minlength="3" name="description" autofocus required/></label>
     </form>
 </section>
 </body>
