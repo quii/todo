@@ -23,10 +23,15 @@ h1 {
 .sortable div {
     padding: 1em 0 1em 0;
     border-bottom: 4px dotted darkred;
+    cursor: grab;
+}
+
+.sortable div span {
+    cursor: pointer;
 }
 
 div.dragClass {
-    /*border-bottom: none;*/
+    cursor: grabbing;
 }
 
 label {
